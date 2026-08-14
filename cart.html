@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart | Gold Scents</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #fafafa;
+            color: #111;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid #eaeaea;
+        }
+        h2 {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 2px solid #eaeaea;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .item-details h4 {
+            margin: 0 0 5px 0;
+            text-transform: uppercase;
+        }
+        .item-details p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #ff4d4d;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .total-section {
+            text-align: right;
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-top: 25px;
+            color: #d4af37;
+        }
+        
+        /* CHECKOUT CUSTOMER INFO FORM */
+        .checkout-form-box {
+            margin-top: 35px;
+            padding-top: 25px;
+            border-top: 2px dashed #eaeaea;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+
+        .checkout-btn {
+            background-color: #111;
+            color: #d4af37;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            font-weight: bold;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 15px;
+        }
+        .checkout-btn:hover {
+            background-color: #333;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #111;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Your Luxury Cart</h2>
+        <div id="cart-contents">
+            <!-- Items load dynamically -->
+        </div>
+        <div class="total-section" id="cart-total">Total: $0.00</div>
+
+        <!-- Real Transaction Submission Form -->
+        <div class="checkout-form-box" id="checkout-section">
+            <h3>Delivery Details</h3>
+            <form id="order-form">
+                <div class="form-group">
+                    <label for="cust-name">Full Name</label>
+                    <input type="text" id="cust-name" required placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="cust-email">Email Address</label>
+                    <input type="email" id="cust-email" required placeholder="john@example.com">
+                </div>
+                <button type="submit" class="checkout-btn">Complete Checkout & Purchase</button>
+            </form>
+        </div>
+
+        <a href="index.html" class="back-link">← Continue Shopping</a>
+    </div>
+
+    <script>
+        let cart = JSON.parse(localStorage.getItem('goldScentsCart')) || [];
+
+        function displayCart() {
+            const container = document.getElementById('cart-contents');
+            const totalContainer = document.getElementById('cart-total');
+            const checkoutSection = document.getElementById('checkout-section');
+            container.innerHTML = '';
+
+            if (cart.length === 0) {
+                container.innerHTML = '<p style="color: #888; font-style: italic;">Your shopping cart is currently empty.</p>';
+                totalContainer.innerText = 'Total: $0.00';
+                checkoutSection.style.display = 'none'; // Hide checkout panel if no items
+                return;
+            }
+
+            checkoutSection.style.display = 'block';
+            let grandTotal = 0;
+
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                grandTotal += itemTotal;
+
+                const div = document.createElement('div');
+                div.className = 'cart-item';
+                div.innerHTML = `
+                    <div class="item-details">
+                        <h4>${item.name}</h4>
+                        <p>$${item.price.toFixed(2)} x ${item.quantity} = <strong>$${itemTotal.toFixed(2)}</strong></p>
+                    </div>
+                    <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+                `;
+                container.appendChild(div);
+            });
+
+            totalContainer.innerText = `Total: $${grandTotal.toFixed(2)}`;
+        }
+
+        function removeItem(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('goldScentsCart', JSON.stringify(cart));
+            displayCart();
+        }
+
+        // Submitting order to dynamic database script
+        document.getElementById('order-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('cust-name').value;
+            const email = document.getElementById('cust-email').value;
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            const orderPayload = {
+                customer_name: name,
+                customer_email: email,
+                total_price: total,
+                items: cart
+            };
+
+            try {
+                const response = await fetch('api/checkout.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderPayload)
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(`✨ Order Placed Successfully! Your Order ID is #${result.order_id} ✨`);
+                    localStorage.removeItem('goldScentsCart'); // Clear shopping cart
+                    window.location.href = 'index.html'; // Direct back home
+                } else {
+                    alert('Checkout Error: ' + result.error);
+                }
+            } catch (error) {
+                console.error("Order processing error:", error);
+                alert("An unexpected error occurred during checkout transaction.");
+            }
+        });
+
+        // Initialize display context layout
+        displayCart();
+    </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+# Ignore local OS junk
+.DS_Store
+Thumbs.db
+
+# Optional: ignore local uploads if you want to upload fresh ones on live
+# uploads/*
