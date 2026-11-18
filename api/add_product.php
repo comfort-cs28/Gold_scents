@@ -1,85 +1,81 @@
 <?php
 header('Content-Type: application/json');
 
-$host = "127.0.0.1";
-$username = "root";
-$password = "";
-$dbname = "gold_scents_db";
+require_once __DIR__ . '/auth_guard.php';
+require_once __DIR__ . '/../config/constants.php';
+require_admin_session(true);
+
+$host = '127.0.0.1';
+$username = 'root';
+$password = '';
+$dbname = 'gold_scents_db';
 
 $conn = new mysqli($host, $username, $password, $dbname);
 
 if ($conn->connect_error) {
-    echo json_encode(['success' => false, 'error' => 'Database connection failed: ' . $conn->connect_error]);
+    echo json_encode(['success' => false, 'error' => 'Database connection failed.']);
     exit;
 }
 
-// 1. Capture text parameters
-$name = $_POST['products_name'] ?? '';
-$notes = $_POST['notes'] ?? '';
-$price = $_POST['price'] ?? 0;
+$product_name = trim($_POST['products_name'] ?? '');
+$notes = trim($_POST['notes'] ?? '');
+$price = floatval($_POST['price'] ?? 0);
+$stock_quantity = intval($_POST['stock_quantity'] ?? AppConfig::DEFAULT_STOCK);
 
-if (empty($name) || empty($price)) {
-    echo json_encode(['success' => false, 'error' => 'Missing required fields (Name or Price).']);
+if ($product_name === '' || $price <= 0) {
+    echo json_encode(['success' => false, 'error' => 'Name and a valid price are required.']);
     exit;
 }
 
-// 2. Process Binary Image File Safe-Handling Module
-$final_image_path = "";
+if ($stock_quantity < 0) {
+    $stock_quantity = 0;
+}
 
-if (isset($_FILES['image_file']) && $_FILES['image_file']['error'] === UPLOAD_ERR_OK) {
-    $fileTmpPath = $_FILES['image_file']['tmp_name'];
-    $fileName = $_FILES['image_file']['name'];
-    $fileSize = $_FILES['image_file']['size'];
-    $fileType = $_FILES['image_file']['type'];
-    
-    // Extract file extension cleanly
-    $fileNameCmps = explode(".", $fileName);
-    $fileExtension = strtolower(end($fileNameCmps));
-    
-    // Safe validation whitelist
-    $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
-    
-    if (in_array($fileExtension, $allowedExtensions)) {
-        // Generate completely unique filename token hash to prevent collisions
-        $newFileName = md5(time() . $fileName) . '.' . $fileExtension;
-        
-        // Define directory root path target (relative to api folder, moving up one step)
-        $uploadFileDir = '../uploads/';
-        
-        // Dynamically create the directory on the hard drive if missing
-        if (!is_dir($uploadFileDir)) {
-            mkdir($uploadFileDir, 0755, true);
-        }
-        
-        $dest_path = $uploadFileDir . $newFileName;
-        
-        // Move file out of temporary server memory space into target system folder
-        if (move_uploaded_file($fileTmpPath, $dest_path)) {
-            // Path saved inside the database needs to point perfectly relative to index.html!
-            $final_image_path = 'uploads/' . $newFileName;
-        } else {
-            echo json_encode(['success' => false, 'error' => 'Server permissions error transferring file to storage layout destination directory.']);
-            exit;
-        }
-    } else {
-        echo json_encode(['success' => false, 'error' => 'Invalid file extension formatting type. Allowed types: JPG, JPEG, PNG, WEBP, GIF.']);
-        exit;
-    }
-} else {
-    echo json_encode(['success' => false, 'error' => 'Please select and attach a valid product image asset file.']);
+$final_image_path = '';
+
+if (!isset($_FILES['image_file']) || $_FILES['image_file']['error'] !== UPLOAD_ERR_OK) {
+    echo json_encode(['success' => false, 'error' => 'Please attach a valid product image.']);
     exit;
 }
 
-// 3. Commit complete array records into MySQL
-$stmt = $conn->prepare("INSERT INTO products (products_name, notes, price, image_url) VALUES (?, ?, ?, ?)");
-$stmt->bind_param("ssds", $name, $notes, $price, $final_image_path);
+$file_tmp_path = $_FILES['image_file']['tmp_name'];
+$file_name = $_FILES['image_file']['name'];
+$file_parts = explode('.', $file_name);
+$file_extension = strtolower(end($file_parts));
+$allowed_extensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+
+if (!in_array($file_extension, $allowed_extensions, true)) {
+    echo json_encode(['success' => false, 'error' => 'Invalid image type.']);
+    exit;
+}
+
+$new_file_name = md5(time() . $file_name) . '.' . $file_extension;
+$upload_dir = '../uploads/';
+
+if (!is_dir($upload_dir)) {
+    mkdir($upload_dir, 0755, true);
+}
+
+$dest_path = $upload_dir . $new_file_name;
+
+if (!move_uploaded_file($file_tmp_path, $dest_path)) {
+    echo json_encode(['success' => false, 'error' => 'Could not save uploaded image.']);
+    exit;
+}
+
+$final_image_path = 'uploads/' . $new_file_name;
+
+$stmt = $conn->prepare(
+    "INSERT INTO products (products_name, notes, price, image_url, stock_quantity)
+     VALUES (?, ?, ?, ?, ?)"
+);
+$stmt->bind_param('ssdsi', $product_name, $notes, $price, $final_image_path, $stock_quantity);
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true]);
 } else {
-    echo json_encode(['success' => false, 'error' => 'Database SQL registration failure: ' . $stmt->error]);
+    echo json_encode(['success' => false, 'error' => 'Database insert failed.']);
 }
 
 $stmt->close();
 $conn->close();
-?>

@@ -1,9 +1,10 @@
 <?php
 ob_start();
 session_start();
+require_once __DIR__ . '/config/auth_config.php';
 
-if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header("Location: login.php");
+if (!isset($_SESSION[AdminAuth::SESSION_KEY]) || $_SESSION[AdminAuth::SESSION_KEY] !== true) {
+    header('Location: login.php');
     exit;
 }
 ?>
@@ -13,180 +14,140 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | Gold Scents</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/store.css">
     <style>
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: #0f0f11;
-            color: #ececec;
-            margin: 0;
-            padding: 30px 20px;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 1000px;
+        body { padding: 30px 20px; }
+        .admin-wrap {
+            width: min(1000px, 96%);
             margin: 0 auto;
-            background: #17171a;
-            padding: 35px;
+            background: var(--bg-panel);
+            padding: 32px;
             border-radius: 8px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-            border: 1px solid #26262b;
+            border: 1px solid var(--border);
         }
-        h2 {
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: #d4af37;
+        .admin-wrap h2 {
             margin-top: 0;
-            border-bottom: 2px solid #26262b;
-            padding-bottom: 15px;
+            color: var(--gold);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 12px;
         }
-        h3 {
+        .admin-wrap h3 {
+            color: #fff;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: #fff;
-            border-bottom: 1px solid #26262b;
-            padding-bottom: 10px;
-            margin-top: 35px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+            margin-top: 34px;
         }
-        .form-group { margin-bottom: 20px; }
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-            color: #d4af37;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 12px;
-            background-color: #0f0f11;
-            border: 1px solid #333;
-            color: #fff;
-            border-radius: 4px;
-            box-sizing: border-box;
-            outline: none;
-        }
-        input:focus { border-color: #d4af37; }
-        input[type="file"] {
-            background: #0f0f11;
-            padding: 10px;
-            cursor: pointer;
-            color: #aaa;
-        }
-        .btn {
-            background-color: #d4af37;
-            color: #0f0f11;
-            border: none;
-            padding: 12px 24px;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-        .btn:hover { background-color: #f3cf65; }
-        
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
-            background: #0f0f11;
-            border-radius: 6px;
-            overflow: hidden;
+            margin-top: 16px;
+            background: var(--bg-main);
         }
         th, td {
-            padding: 14px;
+            padding: 12px;
             text-align: left;
             border-bottom: 1px solid #222;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
         th {
-            background-color: #070708;
-            color: #d4af37;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-        }
-        .delete-btn {
-            background-color: #ff4d4d;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            cursor: pointer;
-            border-radius: 3px;
-            font-weight: bold;
-        }
-        .delete-btn:hover { background-color: #cc0000; }
-        
-        .complete-order-btn {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 4px;
+            background: var(--bg-deep);
+            color: var(--gold);
             text-transform: uppercase;
             font-size: 0.75rem;
             letter-spacing: 1px;
-            margin-top: 15px;
-            transition: background-color 0.2s;
+            font-family: 'Montserrat', sans-serif;
         }
-        .complete-order-btn:hover { background-color: #218838; }
-
+        .delete-btn {
+            background: var(--danger);
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 3px;
+            font-weight: 700;
+        }
         .order-card-box {
-            border: 1px solid #26262b;
+            border: 1px solid var(--border);
             border-radius: 6px;
-            padding: 20px;
-            margin-bottom: 20px;
-            background: #0f0f11;
+            padding: 18px;
+            margin-bottom: 16px;
+            background: var(--bg-main);
         }
         .order-header {
             display: flex;
             justify-content: space-between;
-            font-weight: bold;
+            gap: 12px;
+            flex-wrap: wrap;
             border-bottom: 1px solid #222;
             padding-bottom: 10px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
+            font-weight: 700;
         }
-        .order-items-list {
-            font-size: 0.9rem;
-            color: #ccc;
-            padding-left: 20px;
+        .status-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin-top: 14px;
         }
+        .status-select { width: auto; min-width: 140px; }
         .nav-links {
             display: flex;
             justify-content: space-between;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #26262b;
+            margin-top: 36px;
+            padding-top: 18px;
+            border-top: 1px solid var(--border);
         }
-        .nav-links a { text-decoration: none; font-weight: bold; transition: color 0.3s; }
-        .nav-links a:hover { color: #d4af37 !important; }
+        .nav-links a {
+            text-decoration: none;
+            font-weight: 700;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .status-pill {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--gold);
+            font-family: 'Montserrat', sans-serif;
+        }
     </style>
 </head>
 <body>
+    <div class="admin-wrap">
+        <h2>Gold Scents — Management Console</h2>
 
-    <div class="container">
-        <h2>Gold Scents - Management Console</h2>
-        
         <h3>Customer Sales Orders</h3>
-        <div id="orders-log-container">Loading active customer orders...</div>
-        
+        <div id="orders-log-container">Loading orders...</div>
+
         <form id="add-product-form" enctype="multipart/form-data">
             <h3>Add New Product</h3>
             <div class="form-group">
                 <label for="products_name">Product Name</label>
-                <input type="text" id="products_name" name="products_name" placeholder="e.g. Royal Oud Eau De Parfum" required>
+                <input type="text" id="products_name" name="products_name" required>
             </div>
             <div class="form-group">
-                <label for="price">Price ($)</label>
-                <input type="number" step="0.01" id="price" name="price" placeholder="150.00" required>
+                <label for="notes">Scent Notes</label>
+                <input type="text" id="notes" name="notes" placeholder="e.g. vanilla, musk, oud" required>
             </div>
             <div class="form-group">
-                <label for="image_file">Product Display Image</label>
+                <label for="price">Price (GHS)</label>
+                <input type="number" step="0.01" id="price" name="price" required>
+            </div>
+            <div class="form-group">
+                <label for="stock_quantity">Stock Quantity</label>
+                <input type="number" id="stock_quantity" name="stock_quantity" min="0" value="10" required>
+            </div>
+            <div class="form-group">
+                <label for="image_file">Product Image</label>
                 <input type="file" id="image_file" name="image_file" accept="image/*" required>
             </div>
             <button type="submit" class="btn">Add Product to Store</button>
@@ -199,7 +160,9 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                     <th>ID</th>
                     <th>Image</th>
                     <th>Name</th>
+                    <th>Notes</th>
                     <th>Price</th>
+                    <th>Stock</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -207,152 +170,213 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
         </table>
 
         <div class="nav-links">
-            <a href="index.html" style="color: #fff;">← Visit Storefront</a>
-            <a href="logout.php" style="color: #ff4d4d;">Logout & Sign Out ➔</a>
+            <a href="index.html" style="color:#fff;">← Visit Storefront</a>
+            <a href="logout.php" style="color:var(--danger);">Logout</a>
         </div>
     </div>
 
+    <script src="js/constants.js"></script>
+    <script src="js/toast.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            loadInventory();
-            loadOrders();
+        let csrf_token = '';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await refresh_csrf_token();
+            load_inventory();
+            load_orders();
         });
 
-        async function loadOrders() {
+        async function refresh_csrf_token() {
+            const response = await fetch('api/csrf_token.php');
+            const result = await response.json();
+            if (!result.success) {
+                show_toast('Session expired. Please log in again.', 'error');
+                return;
+            }
+            csrf_token = result.csrf_token;
+        }
+
+        function csrf_headers(extra_headers = {}) {
+            return {
+                ...extra_headers,
+                'X-CSRF-Token': csrf_token,
+            };
+        }
+
+        function build_status_options(current_status) {
+            return Object.values(ORDER_STATUS).map((status_value) => {
+                const selected = status_value === current_status ? 'selected' : '';
+                return `<option value="${status_value}" ${selected}>${ORDER_STATUS_LABELS[status_value]}</option>`;
+            }).join('');
+        }
+
+        async function load_orders() {
             try {
                 const response = await fetch('api/get_orders.php');
                 const orders = await response.json();
                 const container = document.getElementById('orders-log-container');
                 container.innerHTML = '';
 
-                if (orders.length === 0) {
-                    container.innerHTML = '<p style="color: #888; font-style: italic; padding: 10px 0;">No pending customer orders.</p>';
+                if (!Array.isArray(orders) || orders.length === EMPTY_CART_LENGTH) {
+                    container.innerHTML = '<p class="empty-state">No customer orders yet.</p>';
                     return;
                 }
 
-                orders.forEach(order => {
+                orders.forEach((order) => {
                     const box = document.createElement('div');
                     box.className = 'order-card-box';
-                    
-                    let itemsHtml = '';
-                    order.items.forEach(item => {
-                        itemsHtml += `<li>${item.product_name} (x${item.quantity}) - $${parseFloat(item.price).toFixed(2)} each</li>`;
-                    });
+
+                    const items_html = order.items.map((item) => (
+                        `<li>${escape_html(item.product_name)} (x${item.quantity}) — ${format_money(item.price)}</li>`
+                    )).join('');
+
+                    const proof_html = order.payment_proof_url
+                        ? `<p><strong>Payment Proof:</strong> <a href="${escape_html(order.payment_proof_url)}" target="_blank" rel="noopener" style="color:var(--gold);">View screenshot</a></p>`
+                        : '<p><strong>Payment Proof:</strong> —</p>';
 
                     box.innerHTML = `
                         <div class="order-header">
-                            <span style="color: #d4af37;">Order #${order.id}</span>
-                            <span style="font-size: 0.85rem; color:#888;">${order.created_at}</span>
+                            <span style="color:var(--gold);">Order #${order.id}</span>
+                            <span class="status-pill">${ORDER_STATUS_LABELS[order.status] || order.status}</span>
+                            <span style="font-size:0.85rem;color:#888;">${escape_html(order.created_at)}</span>
                         </div>
-                        <p style="margin: 5px 0;"><strong>Customer:</strong> ${order.customer_name} (${order.customer_email})</p>
-                        <p style="margin: 5px 0;"><strong>Total Received:</strong> <span style="color: #28a745; font-weight: bold;">$${parseFloat(order.total_price).toFixed(2)}</span></p>
-                        <p style="margin: 12px 0 5px 0; font-weight: bold; color: #d4af37;">Items Purchased:</p>
-                        <ul class="order-items-list">${itemsHtml}</ul>
-                        <button class="complete-order-btn" onclick="deleteOrder(${order.id})">✓ Mark Delivered & Remove</button>
+                        <p><strong>Customer:</strong> ${escape_html(order.customer_name)} (${escape_html(order.customer_email)})</p>
+                        <p><strong>Phone:</strong> ${escape_html(order.customer_phone || '—')}</p>
+                        <p><strong>Address:</strong> ${escape_html(order.delivery_address || '—')}</p>
+                        <p><strong>MoMo ID:</strong> ${escape_html(order.momo_transaction_id || '—')}</p>
+                        ${proof_html}
+                        <p><strong>Total:</strong> <span style="color:var(--success);font-weight:700;">${format_money(order.total_price)}</span></p>
+                        <p style="color:var(--gold);font-weight:700;margin-bottom:4px;">Items</p>
+                        <ul>${items_html}</ul>
+                        <div class="status-row">
+                            <select class="status-select" id="status-${order.id}">
+                                ${build_status_options(order.status)}
+                            </select>
+                            <button class="btn" type="button" onclick="update_order_status(${order.id})">Update Status</button>
+                            <button class="delete-btn" type="button" onclick="delete_order(${order.id})">Remove</button>
+                        </div>
                     `;
                     container.appendChild(box);
                 });
             } catch (error) {
-                console.error("Error loading orders log:", error);
+                console.error(error);
+                show_toast('Could not load orders.', 'error');
             }
         }
 
-        async function deleteOrder(id) {
-            if (!confirm("Confirm that Order #" + id + " has been delivered and can be removed?")) return;
+        async function update_order_status(order_id) {
+            const status_value = document.getElementById(`status-${order_id}`).value;
+            try {
+                const response = await fetch('api/update_order_status.php', {
+                    method: 'POST',
+                    headers: csrf_headers({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify({ id: order_id, status: status_value }),
+                });
+                const result = await response.json();
+                if (result.success) {
+                    show_toast(`Order #${order_id} → ${ORDER_STATUS_LABELS[status_value]}`);
+                    load_orders();
+                } else {
+                    show_toast(result.error || 'Update failed', 'error');
+                }
+            } catch (error) {
+                show_toast('Network error updating status.', 'error');
+            }
+        }
 
+        async function delete_order(order_id) {
+            if (!confirm(`Remove order #${order_id}?`)) return;
             try {
                 const response = await fetch('api/delete_order.php', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: id })
+                    headers: csrf_headers({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify({ id: order_id }),
                 });
-
-                const rawText = await response.text();
-                let result;
-
-                try {
-                    result = JSON.parse(rawText);
-                } catch (e) {
-                    alert("PHP Server Error Output:\n" + rawText);
-                    return;
-                }
-
+                const result = await response.json();
                 if (result.success) {
-                    alert("✓ Order #" + id + " marked as delivered and removed!");
-                    loadOrders(); // Instantly refresh active orders list
+                    show_toast(`Order #${order_id} removed`);
+                    load_orders();
                 } else {
-                    alert("Unable to remove order:\n" + result.error);
+                    show_toast(result.error || 'Delete failed', 'error');
                 }
             } catch (error) {
-                console.error("Error deleting order:", error);
-                alert("Network Error: " + error.message);
+                show_toast('Network error deleting order.', 'error');
             }
         }
 
-        async function loadInventory() {
+        async function load_inventory() {
             try {
                 const response = await fetch('api/products.php');
                 const products = await response.json();
-                const listContainer = document.getElementById('inventory-list');
-                listContainer.innerHTML = '';
+                const list = document.getElementById('inventory-list');
+                list.innerHTML = '';
 
-                if (products.length === 0) {
-                    listContainer.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #888; padding: 20px;">No inventory items found.</td></tr>`;
+                if (!Array.isArray(products) || products.length === EMPTY_CART_LENGTH) {
+                    list.innerHTML = '<tr><td colspan="7" class="empty-state">No inventory items.</td></tr>';
                     return;
                 }
 
-                products.forEach(product => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
+                products.forEach((product) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
                         <td>${product.id}</td>
-                        <td><img src="${product.image_url}" style="width: 45px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid #333;"></td>
-                        <td><strong style="color: #fff;">${product.products_name}</strong></td>
-                        <td style="color: #d4af37;">$${parseFloat(product.price).toFixed(2)}</td>
-                        <td><button class="delete-btn" onclick="deleteProduct(${product.id})">Delete</button></td>
+                        <td><img src="${escape_html(product.image_url)}" alt="" style="width:45px;height:45px;object-fit:cover;border-radius:4px;border:1px solid #333;"></td>
+                        <td><strong>${escape_html(product.products_name)}</strong></td>
+                        <td>${escape_html(product.notes || '—')}</td>
+                        <td style="color:var(--gold);">${format_money(product.price)}</td>
+                        <td>${product.stock_quantity}</td>
+                        <td><button class="delete-btn" type="button" onclick="delete_product(${product.id})">Delete</button></td>
                     `;
-                    listContainer.appendChild(tr);
+                    list.appendChild(row);
                 });
             } catch (error) {
-                console.error("Error loading products inventory:", error);
+                show_toast('Could not load inventory.', 'error');
             }
         }
 
-        document.getElementById('add-product-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            
+        document.getElementById('add-product-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const form_data = new FormData(event.target);
+            form_data.append('csrf_token', csrf_token);
+
             try {
-                const response = await fetch('api/add_product.php', { method: 'POST', body: formData });
+                const response = await fetch('api/add_product.php', {
+                    method: 'POST',
+                    headers: csrf_headers(),
+                    body: form_data,
+                });
                 const result = await response.json();
+
                 if (result.success) {
-                    alert('✨ Product added to inventory successfully!');
-                    this.reset();
-                    loadInventory();
-                } else { 
-                    alert('Upload Error: ' + result.error); 
+                    show_toast('Product added to inventory');
+                    event.target.reset();
+                    document.getElementById('stock_quantity').value = '10';
+                    load_inventory();
+                } else {
+                    show_toast(result.error || 'Upload failed', 'error');
                 }
-            } catch (error) { 
-                console.error(error); 
-                alert('An unexpected network error occurred.');
+            } catch (error) {
+                show_toast('Network error adding product.', 'error');
             }
         });
 
-        async function deleteProduct(id) {
-            if (!confirm("Permanently delete this product from the store catalog?")) return;
+        async function delete_product(product_id) {
+            if (!confirm('Permanently delete this product?')) return;
             try {
                 const response = await fetch('api/delete_product.php', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: id })
+                    headers: csrf_headers({ 'Content-Type': 'application/json' }),
+                    body: JSON.stringify({ id: product_id }),
                 });
                 const result = await response.json();
-                if (result.success) { 
-                    loadInventory(); 
-                } else { 
-                    alert(result.error); 
+                if (result.success) {
+                    show_toast('Product deleted');
+                    load_inventory();
+                } else {
+                    show_toast(result.error || 'Delete failed', 'error');
                 }
-            } catch (error) { 
-                console.error(error); 
+            } catch (error) {
+                show_toast('Network error deleting product.', 'error');
             }
         }
     </script>

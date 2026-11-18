@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fragrance | Gold Scents</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/store.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="logo">
+            <h1 class="logo-text">Gold Scents</h1>
+        </div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="track.html">Track Order</a>
+            <a href="cart.html">Cart <span class="cart-icon" id="cart-count">0</span></a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div id="product-detail" class="panel">
+            <p class="empty-state">Loading fragrance...</p>
+        </div>
+        <a href="index.html" class="back-link">← Back to Collection</a>
+    </main>
+
+    <script src="js/constants.js"></script>
+    <script src="js/cart_store.js"></script>
+    <script src="js/toast.js"></script>
+    <script>
+        let cart = load_cart();
+        document.getElementById('cart-count').innerText = get_cart_count(cart);
+
+        const url_params = new URLSearchParams(window.location.search);
+        const product_id = parseInt(url_params.get('id'), 10);
+
+        async function load_product() {
+            const detail = document.getElementById('product-detail');
+
+            if (!product_id) {
+                detail.innerHTML = '<p class="empty-state">Product not found.</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`api/product.php?id=${product_id}`);
+                const product = await response.json();
+
+                if (!response.ok || !product.id) {
+                    detail.innerHTML = '<p class="empty-state">This fragrance is unavailable.</p>';
+                    return;
+                }
+
+                document.title = `${product.products_name} | Gold Scents`;
+                const stock = parseInt(product.stock_quantity, 10) || 0;
+                const out_of_stock = stock < MIN_STOCK_AVAILABLE;
+
+                detail.innerHTML = `
+                    <div class="detail-layout">
+                        <img class="detail-image" src="${escape_html(product.image_url)}" alt="${escape_html(product.products_name)}">
+                        <div class="detail-copy">
+                            <h1>${escape_html(product.products_name)}</h1>
+                            <p class="product-notes">${escape_html(product.notes || 'Signature notes coming soon.')}</p>
+                            <p class="product-price" style="margin:18px 0;">${format_money(product.price)}</p>
+                            <p class="stock-badge ${out_of_stock ? 'out' : (stock <= LOW_STOCK_THRESHOLD ? 'low' : '')}">
+                                ${out_of_stock ? 'Out of stock' : `${stock} in stock`}
+                            </p>
+                            <div class="card-actions" style="margin-top:24px;max-width:320px;">
+                                <button class="add-btn" id="detail-add-btn" ${out_of_stock ? 'disabled' : ''}>
+                                    ${out_of_stock ? 'Out of Stock' : 'Add To Cart'}
+                                </button>
+                                <a class="wa-btn" href="${build_whatsapp_product_link(product.products_name)}" target="_blank" rel="noopener">
+                                    Order on WhatsApp
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const add_btn = document.getElementById('detail-add-btn');
+                add_btn.addEventListener('click', () => {
+                    const result = add_item_to_cart(cart, {
+                        id: parseInt(product.id, 10),
+                        name: product.products_name,
+                        price: product.price,
+                    }, stock);
+
+                    cart = result.cart;
+
+                    if (!result.added) {
+                        show_toast(
+                            result.reason === 'out_of_stock'
+                                ? 'This fragrance is out of stock.'
+                                : 'No more stock available for this item.',
+                            'error'
+                        );
+                        return;
+                    }
+
+                    document.getElementById('cart-count').innerText = get_cart_count(cart);
+                    show_toast(`Added ${product.products_name} to cart`);
+                });
+            } catch (error) {
+                console.error(error);
+                detail.innerHTML = '<p class="empty-state">Could not load this fragrance.</p>';
+            }
+        }
+
+        load_product();
+    </script>
+</body>
+</html>

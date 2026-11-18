@@ -4,225 +4,205 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Cart | Gold Scents</title>
-    <style>
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: #fafafa;
-            color: #111;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 40px auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            border: 1px solid #eaeaea;
-        }
-        h2 {
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border-bottom: 2px solid #eaeaea;
-            padding-bottom: 10px;
-            margin-top: 0;
-        }
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
-        }
-        .item-details h4 {
-            margin: 0 0 5px 0;
-            text-transform: uppercase;
-        }
-        .item-details p {
-            margin: 0;
-            color: #666;
-            font-size: 0.9rem;
-        }
-        .remove-btn {
-            background: none;
-            border: none;
-            color: #ff4d4d;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .total-section {
-            text-align: right;
-            font-size: 1.4rem;
-            font-weight: bold;
-            margin-top: 25px;
-            color: #d4af37;
-        }
-        
-        /* CHECKOUT CUSTOMER INFO FORM */
-        .checkout-form-box {
-            margin-top: 35px;
-            padding-top: 25px;
-            border-top: 2px dashed #eaeaea;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-        }
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        input:focus {
-            outline: none;
-            border-color: #d4af37;
-        }
-
-        .checkout-btn {
-            background-color: #111;
-            color: #d4af37;
-            border: none;
-            padding: 15px;
-            width: 100%;
-            font-weight: bold;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin-top: 15px;
-        }
-        .checkout-btn:hover {
-            background-color: #333;
-        }
-        .back-link {
-            display: inline-block;
-            margin-top: 20px;
-            color: #111;
-            text-decoration: none;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/store.css">
 </head>
 <body>
-
-    <div class="container">
-        <h2>Your Luxury Cart</h2>
-        <div id="cart-contents">
-            <!-- Items load dynamically -->
+    <header class="site-header">
+        <div class="logo">
+            <h1 class="logo-text">Gold Scents</h1>
         </div>
-        <div class="total-section" id="cart-total">Total: $0.00</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="track.html">Track Order</a>
+            <a href="cart.html">Cart <span class="cart-icon" id="cart-count">0</span></a>
+        </nav>
+    </header>
 
-        <!-- Real Transaction Submission Form -->
-        <div class="checkout-form-box" id="checkout-section">
-            <h3>Delivery Details</h3>
-            <form id="order-form">
-                <div class="form-group">
-                    <label for="cust-name">Full Name</label>
-                    <input type="text" id="cust-name" required placeholder="John Doe">
-                </div>
-                <div class="form-group">
-                    <label for="cust-email">Email Address</label>
-                    <input type="email" id="cust-email" required placeholder="john@example.com">
-                </div>
-                <button type="submit" class="checkout-btn">Complete Checkout & Purchase</button>
-            </form>
+    <main class="container">
+        <div class="panel">
+            <h2>Your Luxury Cart</h2>
+            <div id="cart-contents"></div>
+            <div class="total-section" id="cart-total">Total: GH₵0.00</div>
+
+            <div id="checkout-section" style="display:none;">
+                <div class="payment-note" id="payment-note"></div>
+
+                <h3 style="color:#fff;text-transform:uppercase;letter-spacing:1px;font-family:'Montserrat',sans-serif;">Delivery Details</h3>
+                <form id="order-form">
+                    <div class="form-group">
+                        <label for="cust-name">Full Name</label>
+                        <input type="text" id="cust-name" required placeholder="Your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="cust-email">Email Address</label>
+                        <input type="email" id="cust-email" required placeholder="you@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="cust-phone">Phone Number</label>
+                        <input type="tel" id="cust-phone" required placeholder="0XX XXX XXXX">
+                    </div>
+                    <div class="form-group">
+                        <label for="cust-address">Delivery Address</label>
+                        <textarea id="cust-address" rows="3" required placeholder="Street, area, city"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="momo-id">MoMo Transaction ID</label>
+                        <input type="text" id="momo-id" required placeholder="e.g. 1234567890">
+                    </div>
+                    <div class="form-group">
+                        <label for="payment-proof">Payment Screenshot (optional)</label>
+                        <input type="file" id="payment-proof" accept="image/*">
+                    </div>
+                    <button type="submit" class="btn checkout-btn">Complete Checkout</button>
+                </form>
+            </div>
+
+            <a href="index.html" class="back-link">← Continue Shopping</a>
         </div>
+    </main>
 
-        <a href="index.html" class="back-link">← Continue Shopping</a>
-    </div>
-
+    <script src="js/constants.js"></script>
+    <script src="js/cart_store.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/order_helpers.js"></script>
     <script>
-        let cart = JSON.parse(localStorage.getItem('goldScentsCart')) || [];
+        let cart = load_cart();
 
-        function displayCart() {
+        document.getElementById('payment-note').innerHTML =
+            `Pay via MoMo to <strong>${MOMO_NUMBER}</strong> (${MOMO_ACCOUNT_NAME}), then enter your transaction ID and optionally upload a payment screenshot.`;
+
+        function display_cart() {
             const container = document.getElementById('cart-contents');
-            const totalContainer = document.getElementById('cart-total');
-            const checkoutSection = document.getElementById('checkout-section');
+            const total_container = document.getElementById('cart-total');
+            const checkout_section = document.getElementById('checkout-section');
             container.innerHTML = '';
+            document.getElementById('cart-count').innerText = get_cart_count(cart);
 
-            if (cart.length === 0) {
-                container.innerHTML = '<p style="color: #888; font-style: italic;">Your shopping cart is currently empty.</p>';
-                totalContainer.innerText = 'Total: $0.00';
-                checkoutSection.style.display = 'none'; // Hide checkout panel if no items
+            if (cart.length === EMPTY_CART_LENGTH) {
+                container.innerHTML = `
+                    <p class="empty-state">Your shopping cart is currently empty.</p>
+                    <div style="text-align:center;">
+                        <a class="btn" href="index.html">Shop the Collection</a>
+                    </div>
+                `;
+                total_container.innerText = `Total: ${format_money(0)}`;
+                checkout_section.style.display = 'none';
                 return;
             }
 
-            checkoutSection.style.display = 'block';
-            let grandTotal = 0;
+            checkout_section.style.display = 'block';
 
             cart.forEach((item, index) => {
-                const itemTotal = item.price * item.quantity;
-                grandTotal += itemTotal;
-
-                const div = document.createElement('div');
-                div.className = 'cart-item';
-                div.innerHTML = `
+                const item_total = item.price * item.quantity;
+                const row = document.createElement('div');
+                row.className = 'cart-item';
+                row.innerHTML = `
                     <div class="item-details">
-                        <h4>${item.name}</h4>
-                        <p>$${item.price.toFixed(2)} x ${item.quantity} = <strong>$${itemTotal.toFixed(2)}</strong></p>
+                        <h4>${escape_html(item.name)}</h4>
+                        <p>${format_money(item.price)} × ${item.quantity} = <strong>${format_money(item_total)}</strong></p>
                     </div>
-                    <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+                    <div class="qty-controls">
+                        <button class="qty-btn" type="button" data-action="dec" data-index="${index}">−</button>
+                        <span>${item.quantity}</span>
+                        <button class="qty-btn" type="button" data-action="inc" data-index="${index}">+</button>
+                        <button class="remove-btn" type="button" data-action="remove" data-index="${index}">Remove</button>
+                    </div>
                 `;
-                container.appendChild(div);
+                container.appendChild(row);
             });
 
-            totalContainer.innerText = `Total: $${grandTotal.toFixed(2)}`;
+            total_container.innerText = `Total: ${format_money(get_cart_total(cart))}`;
         }
 
-        function removeItem(index) {
-            cart.splice(index, 1);
-            localStorage.setItem('goldScentsCart', JSON.stringify(cart));
-            displayCart();
-        }
+        document.getElementById('cart-contents').addEventListener('click', (event) => {
+            const button = event.target.closest('button');
+            if (!button) return;
 
-        // Submitting order to dynamic database script
-        document.getElementById('order-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
+            const index = parseInt(button.dataset.index, 10);
+            const action = button.dataset.action;
+            const item = cart[index];
+            if (!item) return;
 
-            const name = document.getElementById('cust-name').value;
-            const email = document.getElementById('cust-email').value;
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            if (action === 'remove') {
+                cart.splice(index, 1);
+                save_cart(cart);
+            } else if (action === 'inc') {
+                cart = update_item_quantity(cart, index, item.quantity + 1);
+            } else if (action === 'dec') {
+                cart = update_item_quantity(cart, index, item.quantity - 1);
+            }
 
-            const orderPayload = {
-                customer_name: name,
-                customer_email: email,
-                total_price: total,
-                items: cart
-            };
+            display_cart();
+        });
+
+        document.getElementById('order-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            if (cart.length === EMPTY_CART_LENGTH) {
+                show_toast('Your cart is empty.', 'error');
+                return;
+            }
+
+            const customer_name = document.getElementById('cust-name').value.trim();
+            const customer_email = document.getElementById('cust-email').value.trim();
+            const customer_phone = document.getElementById('cust-phone').value.trim();
+            const delivery_address = document.getElementById('cust-address').value.trim();
+            const momo_transaction_id = document.getElementById('momo-id').value.trim();
+            const total_price = get_cart_total(cart);
+            const proof_input = document.getElementById('payment-proof');
+
+            const form_data = new FormData();
+            form_data.append('customer_name', customer_name);
+            form_data.append('customer_email', customer_email);
+            form_data.append('customer_phone', customer_phone);
+            form_data.append('delivery_address', delivery_address);
+            form_data.append('momo_transaction_id', momo_transaction_id);
+            form_data.append('total_price', String(total_price));
+            form_data.append('items', JSON.stringify(cart));
+
+            if (proof_input.files && proof_input.files[0]) {
+                form_data.append('payment_proof', proof_input.files[0]);
+            }
 
             try {
                 const response = await fetch('api/checkout.php', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(orderPayload)
+                    body: form_data,
                 });
                 const result = await response.json();
 
                 if (result.success) {
-                    alert(`✨ Order Placed Successfully! Your Order ID is #${result.order_id} ✨`);
-                    localStorage.removeItem('goldScentsCart'); // Clear shopping cart
-                    window.location.href = 'index.html'; // Direct back home
+                    const order_receipt = {
+                        order_id: result.order_id,
+                        status: result.status,
+                        customer_name,
+                        customer_email,
+                        customer_phone,
+                        delivery_address,
+                        momo_transaction_id,
+                        total_price,
+                        items: cart.map((item) => ({
+                            name: item.name,
+                            quantity: item.quantity,
+                            price: item.price,
+                        })),
+                    };
+
+                    save_last_order(order_receipt);
+                    clear_cart();
+                    window.location.href = `order_success.html?order_id=${result.order_id}`;
                 } else {
-                    alert('Checkout Error: ' + result.error);
+                    show_toast(result.error || 'Checkout failed', 'error');
                 }
             } catch (error) {
-                console.error("Order processing error:", error);
-                alert("An unexpected error occurred during checkout transaction.");
+                console.error(error);
+                show_toast('Unexpected error during checkout.', 'error');
             }
         });
 
-        // Initialize display context layout
-        displayCart();
+        display_cart();
     </script>
 </body>
 </html>
