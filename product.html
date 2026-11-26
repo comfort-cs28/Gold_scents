@@ -5,45 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fragrance | Gold Scents</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/store.css">
     <link rel="stylesheet" href="css/store-pages.css">
 </head>
 <body>
-    <div class="announcement-bar">Free consultation with every fragrance order</div>
+    <div class="announcement-bar">
+        <button type="button" data-announcement-prev aria-label="Previous">‹</button>
+        <span data-announcement-text>Free consultation with every fragrance order</span>
+        <button type="button" data-announcement-next aria-label="Next">›</button>
+    </div>
 
-    <header class="site-header">
-        <div class="logo-mark">
-            <h1 class="logo-text">goldscents</h1>
-            <small>Luxury fragrance vault</small>
-        </div>
+    <header class="site-header inner-header">
+        <a class="logo" href="index.html">
+            <svg class="logo-bottle" viewBox="0 0 40 52" aria-hidden="true">
+                <path d="M14 8h12v6H14zM12 14h16l3 34H9L12 14z"></path>
+                <path d="M16 4h8v4h-8z"></path>
+            </svg>
+            <div>
+                <h1 class="logo-text">gold<span>scents</span></h1>
+                <small>Luxury fragrance vault</small>
+            </div>
+        </a>
         <nav>
             <a href="index.html">Home</a>
-            <a href="track.html">Track Order</a>
+            <a href="index.html#collection">Collection</a>
+            <a href="track.html">Track</a>
             <a href="cart.html">Cart <span class="cart-icon" id="cart-count">0</span></a>
         </nav>
     </header>
 
-    <main class="container">
+    <main class="page-shell has-solid-header">
         <div id="product-detail" class="panel">
             <p class="empty-state">Loading fragrance...</p>
         </div>
-        <a href="index.html" class="back-link">← Back to Collection</a>
+        <div style="width:min(860px,92%);margin:-30px auto 40px;">
+            <a href="index.html#collection" class="back-link">← Back to Collection</a>
+        </div>
     </main>
 
     <script src="js/constants.js"></script>
     <script src="js/cart_store.js"></script>
     <script src="js/toast.js"></script>
+    <script src="js/layout.js"></script>
     <script>
         let cart = load_cart();
         document.getElementById('cart-count').innerText = get_cart_count(cart);
-
-        const url_params = new URLSearchParams(window.location.search);
-        const product_id = parseInt(url_params.get('id'), 10);
+        const product_id = parseInt(new URLSearchParams(window.location.search).get('id'), 10);
 
         async function load_product() {
             const detail = document.getElementById('product-detail');
-
             if (!product_id) {
                 detail.innerHTML = '<p class="empty-state">Product not found.</p>';
                 return;
@@ -52,7 +63,6 @@
             try {
                 const response = await fetch(`api/product.php?id=${product_id}`);
                 const product = await response.json();
-
                 if (!response.ok || !product.id) {
                     detail.innerHTML = '<p class="empty-state">This fragrance is unavailable.</p>';
                     return;
@@ -67,11 +77,11 @@
                         <img class="detail-image" src="${escape_html(product.image_url)}" alt="${escape_html(product.products_name)}">
                         <div class="detail-copy">
                             <h1>${escape_html(product.products_name)}</h1>
-                            <p class="product-notes">${escape_html(product.notes || 'Signature notes coming soon.')}</p>
-                            <p class="product-price" style="margin:18px 0;">${format_money(product.price)}</p>
-                            <p class="product-notes">${out_of_stock ? 'Sold out' : `${stock} in stock`}</p>
-                            <div class="card-actions" style="margin-top:24px;max-width:320px;">
-                                <button class="add-btn" id="detail-add-btn" ${out_of_stock ? 'disabled' : ''} type="button">
+                            <p class="product-card__notes">${escape_html(product.notes || 'Signature notes coming soon.')}</p>
+                            <p class="product-card__price">${format_money(product.price)}</p>
+                            <p class="product-card__notes">${out_of_stock ? 'Sold out' : `${stock} in stock`}</p>
+                            <div class="product-card__actions" style="opacity:1;transform:none;max-width:320px;margin-top:24px;">
+                                <button class="add-btn" id="detail-add-btn" type="button" ${out_of_stock ? 'disabled' : ''}>
                                     ${out_of_stock ? 'Sold Out' : 'Add To Cart'}
                                 </button>
                                 <a class="wa-btn" href="${build_whatsapp_product_link(product.products_name)}" target="_blank" rel="noopener">
@@ -88,24 +98,15 @@
                         name: product.products_name,
                         price: product.price,
                     }, stock);
-
                     cart = result.cart;
-
                     if (!result.added) {
-                        show_toast(
-                            result.reason === 'out_of_stock'
-                                ? 'This fragrance is out of stock.'
-                                : 'No more stock available for this item.',
-                            'error'
-                        );
+                        show_toast('Unable to add this item.', 'error');
                         return;
                     }
-
                     document.getElementById('cart-count').innerText = get_cart_count(cart);
                     show_toast(`Added ${product.products_name} to cart`);
                 });
             } catch (error) {
-                console.error(error);
                 detail.innerHTML = '<p class="empty-state">Could not load this fragrance.</p>';
             }
         }
@@ -114,4 +115,3 @@
     </script>
 </body>
 </html>
-

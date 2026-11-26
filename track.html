@@ -5,44 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Track Order | Gold Scents</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/store.css">
     <link rel="stylesheet" href="css/store-pages.css">
 </head>
 <body>
-    <div class="announcement-bar">Track your fragrance order anytime</div>
+    <div class="announcement-bar">
+        <button type="button" data-announcement-prev aria-label="Previous">‹</button>
+        <span data-announcement-text>Track your fragrance order anytime</span>
+        <button type="button" data-announcement-next aria-label="Next">›</button>
+    </div>
 
-    <header class="site-header">
-        <div class="logo-mark">
-            <h1 class="logo-text">goldscents</h1>
-            <small>Luxury fragrance vault</small>
-        </div>
+    <header class="site-header inner-header">
+        <a class="logo" href="index.html">
+            <svg class="logo-bottle" viewBox="0 0 40 52" aria-hidden="true">
+                <path d="M14 8h12v6H14zM12 14h16l3 34H9L12 14z"></path>
+                <path d="M16 4h8v4h-8z"></path>
+            </svg>
+            <div>
+                <h1 class="logo-text">gold<span>scents</span></h1>
+                <small>Luxury fragrance vault</small>
+            </div>
+        </a>
         <nav>
             <a href="index.html">Home</a>
-            <a href="track.html">Track Order</a>
+            <a href="index.html#collection">Collection</a>
+            <a href="track.html">Track</a>
             <a href="cart.html">Cart <span class="cart-icon" id="cart-count">0</span></a>
         </nav>
     </header>
 
-    <main class="container">
+    <main class="page-shell has-solid-header">
         <div class="panel">
             <h2>Track Your Order</h2>
-            <p style="color:var(--muted);margin-top:0;">
-                Enter your order ID and the email or phone used at checkout.
-            </p>
-
+            <p style="color:var(--muted);margin-top:0;">Enter your order ID and the email or phone used at checkout.</p>
             <form id="track-form">
                 <div class="form-group">
                     <label for="order-id">Order ID</label>
-                    <input type="number" id="order-id" required min="1" placeholder="e.g. 4">
+                    <input type="number" id="order-id" required min="1">
                 </div>
                 <div class="form-group">
                     <label for="lookup-value">Email or Phone</label>
-                    <input type="text" id="lookup-value" required placeholder="you@example.com or 0XX XXX XXXX">
+                    <input type="text" id="lookup-value" required>
                 </div>
-                <button type="submit" class="btn btn-dark checkout-btn">Check Status</button>
+                <button type="submit" class="btn checkout-btn">Check Status</button>
             </form>
-
             <div id="track-result" style="margin-top:28px;"></div>
             <a href="index.html" class="back-link">← Back to Store</a>
         </div>
@@ -52,23 +59,16 @@
     <script src="js/cart_store.js"></script>
     <script src="js/toast.js"></script>
     <script src="js/order_helpers.js"></script>
+    <script src="js/layout.js"></script>
     <script>
         document.getElementById('cart-count').innerText = get_cart_count(load_cart());
-
         const params = new URLSearchParams(window.location.search);
-        const preset_order_id = params.get('order_id');
-        if (preset_order_id) {
-            document.getElementById('order-id').value = preset_order_id;
-        }
-
+        if (params.get('order_id')) document.getElementById('order-id').value = params.get('order_id');
         const last_order = load_last_order();
-        if (last_order && last_order.customer_email && !document.getElementById('lookup-value').value) {
-            document.getElementById('lookup-value').value = last_order.customer_email;
-        }
+        if (last_order?.customer_email) document.getElementById('lookup-value').value = last_order.customer_email;
 
         document.getElementById('track-form').addEventListener('submit', async (event) => {
             event.preventDefault();
-
             const order_id = document.getElementById('order-id').value.trim();
             const lookup_value = document.getElementById('lookup-value').value.trim();
             const result_host = document.getElementById('track-result');
@@ -78,10 +78,8 @@
                     `api/get_order.php?order_id=${encodeURIComponent(order_id)}&lookup=${encodeURIComponent(lookup_value)}`
                 );
                 const result = await response.json();
-
                 if (!result.success) {
                     result_host.innerHTML = `<p class="empty-state">${escape_html(result.error || 'Order not found.')}</p>`;
-                    show_toast(result.error || 'Order not found.', 'error');
                     return;
                 }
 
@@ -97,22 +95,15 @@
                     <div class="order-summary">
                         <h3>Order #${order.id}</h3>
                         ${render_status_tracker(order.status)}
-                        <p class="summary-meta">
-                            Placed ${escape_html(order.created_at)} · Status:
-                            <strong>${ORDER_STATUS_LABELS[order.status] || escape_html(order.status)}</strong>
-                        </p>
                         <ul>${items_html}</ul>
                         <p class="summary-total"><span>Total</span><strong>${format_money(order.total_price)}</strong></p>
                         <p class="summary-meta">${escape_html(order.customer_name)} · ${escape_html(order.customer_phone)}</p>
-                        <p class="summary-meta">Ship to: ${escape_html(order.delivery_address)}</p>
                     </div>
                 `;
             } catch (error) {
-                console.error(error);
                 show_toast('Could not look up this order.', 'error');
             }
         });
     </script>
 </body>
 </html>
-
