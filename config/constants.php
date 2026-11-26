@@ -26,6 +26,6 @@ class AppConfig {
     public const CURRENCY_PREFIX = 'GH₵';
     public const WHATSAPP_NUMBER = '233534048714';
     public const MOMO_NUMBER = '0598488853';
-    public const MOMO_ACCOUNT_NAME = 'Gold Scents';
+    public const MOMO_ACCOUNT_NAME = 'Yikpa Comfort Akorfa';
     public const DEFAULT_STOCK = 10;
 }

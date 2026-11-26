@@ -1,13 +1,10 @@
 function create_logo_markup() {
     return `
         <a class="logo" href="index.html" aria-label="Gold Scents home">
-            <svg class="logo-bottle" viewBox="0 0 40 52" aria-hidden="true">
-                <path d="M14 8h12v6H14zM12 14h16l3 34H9L12 14z"></path>
-                <path d="M16 4h8v4h-8z"></path>
-            </svg>
-            <div>
+            <img class="logo-image" src="image/gold_scents_logo.png" alt="">
+            <div class="logo-mark">
                 <h1 class="logo-text">gold<span>scents</span></h1>
-                <small>Luxury fragrance vault</small>
+                <small>Fine Fragrances</small>
             </div>
         </a>
     `;
@@ -19,7 +16,7 @@ function init_announcement() {
 
     const messages = [
         'Free consultation with every fragrance order',
-        'Pay via MoMo · 0598488853 · Gold Scents',
+        'Pay via MoMo · 0598488853 · Yikpa Comfort Akorfa',
         'Track your order anytime from the menu',
     ];
     let index = 0;
