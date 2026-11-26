@@ -1,17 +1,21 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Cart | Gold Scents</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/store.css">
+    <link rel="stylesheet" href="css/store-pages.css">
 </head>
 <body>
+    <div class="announcement-bar">Pay via MoMo · 0598488853 · Gold Scents</div>
+
     <header class="site-header">
-        <div class="logo">
-            <h1 class="logo-text">Gold Scents</h1>
+        <div class="logo-mark">
+            <h1 class="logo-text">goldscents</h1>
+            <small>Luxury fragrance vault</small>
         </div>
         <nav>
             <a href="index.html">Home</a>
@@ -22,40 +26,39 @@
 
     <main class="container">
         <div class="panel">
-            <h2>Your Luxury Cart</h2>
+            <h2>Your Cart</h2>
             <div id="cart-contents"></div>
             <div class="total-section" id="cart-total">Total: GH₵0.00</div>
 
             <div id="checkout-section" style="display:none;">
                 <div class="payment-note" id="payment-note"></div>
-
-                <h3 style="color:#fff;text-transform:uppercase;letter-spacing:1px;font-family:'Montserrat',sans-serif;">Delivery Details</h3>
+                <h3 style="margin:0 0 14px;font-size:0.9rem;letter-spacing:0.1em;text-transform:uppercase;">Delivery Details</h3>
                 <form id="order-form">
                     <div class="form-group">
                         <label for="cust-name">Full Name</label>
-                        <input type="text" id="cust-name" required placeholder="Your full name">
+                        <input type="text" id="cust-name" required>
                     </div>
                     <div class="form-group">
                         <label for="cust-email">Email Address</label>
-                        <input type="email" id="cust-email" required placeholder="you@example.com">
+                        <input type="email" id="cust-email" required>
                     </div>
                     <div class="form-group">
                         <label for="cust-phone">Phone Number</label>
-                        <input type="tel" id="cust-phone" required placeholder="0XX XXX XXXX">
+                        <input type="tel" id="cust-phone" required>
                     </div>
                     <div class="form-group">
                         <label for="cust-address">Delivery Address</label>
-                        <textarea id="cust-address" rows="3" required placeholder="Street, area, city"></textarea>
+                        <textarea id="cust-address" rows="3" required></textarea>
                     </div>
                     <div class="form-group">
                         <label for="momo-id">MoMo Transaction ID</label>
-                        <input type="text" id="momo-id" required placeholder="e.g. 1234567890">
+                        <input type="text" id="momo-id" required>
                     </div>
                     <div class="form-group">
                         <label for="payment-proof">Payment Screenshot (optional)</label>
                         <input type="file" id="payment-proof" accept="image/*">
                     </div>
-                    <button type="submit" class="btn checkout-btn">Complete Checkout</button>
+                    <button type="submit" class="btn btn-dark checkout-btn">Complete Checkout</button>
                 </form>
             </div>
 
@@ -84,7 +87,7 @@
                 container.innerHTML = `
                     <p class="empty-state">Your shopping cart is currently empty.</p>
                     <div style="text-align:center;">
-                        <a class="btn" href="index.html">Shop the Collection</a>
+                        <a class="btn btn-dark" href="index.html">Shop the Collection</a>
                     </div>
                 `;
                 total_container.innerText = `Total: ${format_money(0)}`;
@@ -174,7 +177,7 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    const order_receipt = {
+                    save_last_order({
                         order_id: result.order_id,
                         status: result.status,
                         customer_name,
@@ -188,9 +191,7 @@
                             quantity: item.quantity,
                             price: item.price,
                         })),
-                    };
-
-                    save_last_order(order_receipt);
+                    });
                     clear_cart();
                     window.location.href = `order_success.html?order_id=${result.order_id}`;
                 } else {
@@ -206,3 +207,4 @@
     </script>
 </body>
 </html>
+

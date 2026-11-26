@@ -1,17 +1,21 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fragrance | Gold Scents</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/store.css">
+    <link rel="stylesheet" href="css/store-pages.css">
 </head>
 <body>
+    <div class="announcement-bar">Free consultation with every fragrance order</div>
+
     <header class="site-header">
-        <div class="logo">
-            <h1 class="logo-text">Gold Scents</h1>
+        <div class="logo-mark">
+            <h1 class="logo-text">goldscents</h1>
+            <small>Luxury fragrance vault</small>
         </div>
         <nav>
             <a href="index.html">Home</a>
@@ -65,12 +69,10 @@
                             <h1>${escape_html(product.products_name)}</h1>
                             <p class="product-notes">${escape_html(product.notes || 'Signature notes coming soon.')}</p>
                             <p class="product-price" style="margin:18px 0;">${format_money(product.price)}</p>
-                            <p class="stock-badge ${out_of_stock ? 'out' : (stock <= LOW_STOCK_THRESHOLD ? 'low' : '')}">
-                                ${out_of_stock ? 'Out of stock' : `${stock} in stock`}
-                            </p>
+                            <p class="product-notes">${out_of_stock ? 'Sold out' : `${stock} in stock`}</p>
                             <div class="card-actions" style="margin-top:24px;max-width:320px;">
-                                <button class="add-btn" id="detail-add-btn" ${out_of_stock ? 'disabled' : ''}>
-                                    ${out_of_stock ? 'Out of Stock' : 'Add To Cart'}
+                                <button class="add-btn" id="detail-add-btn" ${out_of_stock ? 'disabled' : ''} type="button">
+                                    ${out_of_stock ? 'Sold Out' : 'Add To Cart'}
                                 </button>
                                 <a class="wa-btn" href="${build_whatsapp_product_link(product.products_name)}" target="_blank" rel="noopener">
                                     Order on WhatsApp
@@ -80,8 +82,7 @@
                     </div>
                 `;
 
-                const add_btn = document.getElementById('detail-add-btn');
-                add_btn.addEventListener('click', () => {
+                document.getElementById('detail-add-btn').addEventListener('click', () => {
                     const result = add_item_to_cart(cart, {
                         id: parseInt(product.id, 10),
                         name: product.products_name,
@@ -113,3 +114,4 @@
     </script>
 </body>
 </html>
+

@@ -1,17 +1,21 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gold Scents | Luxury Fragrance Vault</title>
+    <title>Gold Scents | Luxury Fragrance Shop</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/store.css">
+    <link rel="stylesheet" href="css/store-pages.css">
 </head>
 <body>
+    <div class="announcement-bar">Free consultation with every fragrance order</div>
+
     <header class="site-header">
-        <div class="logo">
-            <h1 class="logo-text">Gold Scents</h1>
+        <div class="logo-mark">
+            <h1 class="logo-text">goldscents</h1>
+            <small>Luxury fragrance vault</small>
         </div>
         <nav>
             <a href="index.html">Home</a>
@@ -24,39 +28,57 @@
     <section class="hero">
         <div class="hero-media" aria-hidden="true"></div>
         <div class="hero-content">
-            <h2>Gold Scents</h2>
-            <p>Curating prestigious fragrances for those who demand distinction.</p>
+            <p class="hero-brand">Gold Scents</p>
+            <h2>Fragrances for Distinction</h2>
+            <p>Discover our curated collection of scents designed for presence, memory, and signature style.</p>
             <div class="hero-actions">
-                <a class="btn" href="#collection">Shop the Collection</a>
-                <a class="btn btn-ghost" href="https://wa.me/233534048714" target="_blank" rel="noopener">Chat on WhatsApp</a>
+                <a class="btn" href="#collection">Shop Now</a>
+                <a class="btn btn-ghost" href="https://wa.me/233534048714" target="_blank" rel="noopener">WhatsApp</a>
             </div>
         </div>
     </section>
 
     <main class="container" id="collection">
-        <div class="search-filter-wrapper">
+        <div class="collection-toolbar">
+            <p class="product-count" id="product-count">0 products</p>
             <div class="search-box">
-                <input type="text" id="search-input" placeholder="Search by fragrance name or notes..." />
+                <input type="text" id="search-input" placeholder="Search fragrance or notes..." />
             </div>
         </div>
 
-        <h2 class="section-title">The Collection</h2>
-        <div class="product-grid" id="product-grid"></div>
+        <div class="shop-layout">
+            <aside class="filter-panel">
+                <div class="filter-group">
+                    <h4>Collection</h4>
+                    <p>All fragrances</p>
+                </div>
+                <div class="filter-group">
+                    <h4>Payment</h4>
+                    <p>MoMo · 0598488853</p>
+                </div>
+                <div class="filter-group">
+                    <h4>Support</h4>
+                    <p>WhatsApp ordering available on every product.</p>
+                </div>
+            </aside>
+
+            <div class="product-grid" id="product-grid"></div>
+        </div>
     </main>
 
     <footer class="site-footer">
         <div class="footer-content">
             <div class="footer-col">
                 <h4>Gold Scents</h4>
-                <p>Curating the world's most prestigious and exclusive fragrances for those who demand distinction.</p>
+                <p>Curating prestigious and exclusive fragrances for those who demand distinction.</p>
             </div>
             <div class="footer-col">
-                <h4>Mobile Money Payment</h4>
-                <p style="margin-bottom:8px;"><strong>MoMo Number:</strong> 0598488853</p>
-                <p><strong>Account Name:</strong> Gold Scents</p>
+                <h4>Mobile Money</h4>
+                <p style="margin-bottom:8px;"><strong>MoMo:</strong> 0598488853</p>
+                <p><strong>Name:</strong> Gold Scents</p>
             </div>
             <div class="footer-col">
-                <h4>Connect With Us</h4>
+                <h4>Connect</h4>
                 <div class="social-links">
                     <a href="https://wa.me/233534048714" target="_blank" rel="noopener" class="social-link">Chat on WhatsApp</a>
                     <a href="https://www.snapchat.com/add/akorfaaaa24" target="_blank" rel="noopener" class="social-link">Follow on Snapchat</a>
@@ -64,8 +86,8 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p style="margin:0 0 10px 0;">&copy; 2026 Gold Scents. All Rights Reserved.</p>
-            <a href="admin.php">Secure Staff Login</a>
+            <p style="margin:0;">&copy; 2026 Gold Scents. All Rights Reserved.</p>
+            <a href="admin.php">Staff Login</a>
         </div>
     </footer>
 
@@ -96,35 +118,45 @@
             }
         }
 
-        function stock_label(stock_quantity) {
+        function stock_badge(stock_quantity) {
             const stock = parseInt(stock_quantity, 10) || 0;
             if (stock < MIN_STOCK_AVAILABLE) {
-                return '<span class="stock-badge out">Out of stock</span>';
+                return '<span class="badge out">Sold Out</span>';
             }
             if (stock <= LOW_STOCK_THRESHOLD) {
-                return `<span class="stock-badge low">Only ${stock} left</span>`;
+                return `<span class="badge low">Only ${stock} left</span>`;
             }
-            return `<span class="stock-badge">${stock} in stock</span>`;
+            return '<span class="badge">In Stock</span>';
         }
 
         function render_product_grid(products_to_display) {
             const grid = document.getElementById('product-grid');
+            const count_label = document.getElementById('product-count');
             grid.innerHTML = '';
+            count_label.textContent = `${products_to_display.length} products`;
 
             if (products_to_display.length === EMPTY_CART_LENGTH) {
-                grid.innerHTML = '<p class="empty-state">No luxury fragrances match your search.</p>';
+                grid.innerHTML = '<p class="empty-state">No fragrances match your search.</p>';
                 return;
             }
 
             products_to_display.forEach((product, index) => {
                 const stock = parseInt(product.stock_quantity, 10) || 0;
                 const out_of_stock = stock < MIN_STOCK_AVAILABLE;
-                const card = document.createElement('div');
+                const card = document.createElement('article');
                 card.className = 'product-card';
-                card.style.animationDelay = `${index * 0.08}s`;
+                card.style.animationDelay = `${index * 0.06}s`;
+
+                const notes_badge = product.notes
+                    ? `<span class="badge notes">${escape_html(product.notes)}</span>`
+                    : '';
 
                 card.innerHTML = `
                     <a class="card-media" href="product.html?id=${product.id}">
+                        <div class="card-badges">
+                            ${stock_badge(stock)}
+                            ${notes_badge}
+                        </div>
                         <img src="${escape_html(product.image_url)}" alt="${escape_html(product.products_name)}" />
                     </a>
                     <div class="product-info">
@@ -133,10 +165,9 @@
                         </h3>
                         <p class="product-notes">${escape_html(product.notes || '')}</p>
                         <p class="product-price">${format_money(product.price)}</p>
-                        ${stock_label(stock)}
                         <div class="card-actions">
-                            <button class="add-btn" ${out_of_stock ? 'disabled' : ''} data-id="${product.id}">
-                                ${out_of_stock ? 'Out of Stock' : 'Add To Cart'}
+                            <button class="add-btn" ${out_of_stock ? 'disabled' : ''} type="button">
+                                ${out_of_stock ? 'Sold Out' : 'Add To Cart'}
                             </button>
                             <a class="wa-btn" href="${build_whatsapp_product_link(product.products_name)}" target="_blank" rel="noopener">
                                 Order on WhatsApp
@@ -145,8 +176,7 @@
                     </div>
                 `;
 
-                const add_btn = card.querySelector('.add-btn');
-                add_btn.addEventListener('click', () => {
+                card.querySelector('.add-btn').addEventListener('click', () => {
                     handle_add_to_cart(product);
                 });
 
@@ -194,3 +224,4 @@
     </script>
 </body>
 </html>
+
