@@ -1,22 +1,10 @@
 <?php
 header('Content-Type: application/json');
 
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
 require_once __DIR__ . '/../config/constants.php';
+require_once __DIR__ . '/../config/db.php';
 
-$host = '127.0.0.1';
-$username = 'root';
-$password = '';
-$dbname = 'gold_scents_db';
-
-try {
-    $conn = new mysqli($host, $username, $password, $dbname);
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'error' => 'Database connection failed.']);
-    exit;
-}
+$conn = create_mysqli_connection();
 
 $content_type = $_SERVER['CONTENT_TYPE'] ?? '';
 $is_multipart = stripos($content_type, 'multipart/form-data') !== false;

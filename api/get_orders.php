@@ -1,20 +1,10 @@
 <?php
 header('Content-Type: application/json');
 require_once __DIR__ . '/auth_guard.php';
+require_once __DIR__ . '/../config/db.php';
 require_admin_session();
 
-$host = '127.0.0.1';
-$username = 'root';
-$password = '';
-$dbname = 'gold_scents_db';
-
-$conn = new mysqli($host, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'error' => 'Database connection failed.']);
-    exit;
-}
+$conn = create_mysqli_connection();
 
 $orders_result = $conn->query('SELECT * FROM orders ORDER BY created_at DESC');
 $orders = [];

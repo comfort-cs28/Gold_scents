@@ -1,17 +1,19 @@
 <?php
-$host = 'localhost';
-$dbname = 'gold_scents_db';
-$username = 'root'; // Default username for XAMPP/MAMP/WAMP
-$password = '';     // Default password is usually empty 
+
+require_once __DIR__ . '/config/db_config.php';
+
+$host = DbConfig::HOST;
+$dbname = DbConfig::NAME;
+$username = DbConfig::USER;
+$password = DbConfig::PASS;
 
 try {
-    // Create a new PDO instance
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
-    
-    // Set PDO error mode to exception so we can catch errors easily
+    $pdo = new PDO(
+        'mysql:host=' . $host . ';dbname=' . $dbname . ';charset=' . DbConfig::CHARSET,
+        $username,
+        $password
+    );
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
 } catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
+    die('Database connection failed: ' . $e->getMessage());
 }
-?>

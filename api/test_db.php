@@ -1,32 +1,34 @@
-
 <?php
 header('Content-Type: application/json');
 
-$host = "localhost";
-$username = "root";
-$password = "";
+require_once __DIR__ . '/../config/db_config.php';
 
-// Connect to MySQL WITHOUT choosing a database yet
-$conn = new mysqli($host, $username, $password);
+try {
+    $connection = new mysqli(DbConfig::HOST, DbConfig::USER, DbConfig::PASS);
+    if ($connection->connect_error) {
+        echo json_encode([
+            'success' => false,
+            'error' => 'Connection failed: ' . $connection->connect_error,
+        ]);
+        exit;
+    }
 
-if ($conn->connect_error) {
-    echo json_encode(['success' => false, 'error' => 'Connection failed: ' . $conn->connect_error]);
-    exit;
+    $result = $connection->query('SHOW DATABASES');
+    $databases = [];
+    while ($row = $result->fetch_array()) {
+        $databases[] = $row[0];
+    }
+
+    echo json_encode([
+        'success' => true,
+        'host' => DbConfig::HOST,
+        'configured_database' => DbConfig::NAME,
+        'visible_databases' => $databases,
+    ]);
+    $connection->close();
+} catch (Throwable $error) {
+    echo json_encode([
+        'success' => false,
+        'error' => $error->getMessage(),
+    ]);
 }
-
-// Ask MySQL for a list of all database names it knows about
-$result = $conn->query("SHOW DATABASES");
-$databases = [];
-
-while ($row = $result->fetch_array()) {
-    // Wrap names in brackets [] so we can spot hidden spaces!
-    $databases[] = "[" . $row[0] . "]"; 
-}
-
-echo json_encode([
-    'message' => 'PHP is connected to MySQL! Here are the databases it can see:',
-    'visible_databases' => $databases
-]);
-
-$conn->close();
-?>
