@@ -5,26 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Cart | Gold Scents</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/store.css">
     <link rel="stylesheet" href="css/store-pages.css">
 </head>
 <body>
-    <div class="announcement-bar">Pay via MoMo · 0598488853 · Gold Scents</div>
+    <div class="announcement-bar">
+        <button type="button" data-announcement-prev aria-label="Previous">‹</button>
+        <span data-announcement-text>Pay via MoMo · 0598488853 · Yikpa Comfort Akorfa</span>
+        <button type="button" data-announcement-next aria-label="Next">›</button>
+    </div>
 
-    <header class="site-header">
-        <div class="logo-mark">
-            <h1 class="logo-text">goldscents</h1>
-            <small>Luxury fragrance vault</small>
-        </div>
+    <header class="site-header inner-header">
+        <a class="logo" href="index.html" aria-label="Gold Scents home">
+            <img class="logo-image" src="image/gold_scents_logo.png" alt="">
+            <div class="logo-mark">
+                <h1 class="logo-text">gold<span>scents</span></h1>
+                <small>Fine Fragrances</small>
+            </div>
+        </a>
         <nav>
             <a href="index.html">Home</a>
-            <a href="track.html">Track Order</a>
+            <a href="index.html#collection">Collection</a>
+            <a href="track.html">Track</a>
             <a href="cart.html">Cart <span class="cart-icon" id="cart-count">0</span></a>
         </nav>
     </header>
 
-    <main class="container">
+    <main class="page-shell has-solid-header">
         <div class="panel">
             <h2>Your Cart</h2>
             <div id="cart-contents"></div>
@@ -32,7 +40,7 @@
 
             <div id="checkout-section" style="display:none;">
                 <div class="payment-note" id="payment-note"></div>
-                <h3 style="margin:0 0 14px;font-size:0.9rem;letter-spacing:0.1em;text-transform:uppercase;">Delivery Details</h3>
+                <h3 style="margin:0 0 14px;font-size:0.85rem;letter-spacing:0.12em;text-transform:uppercase;">Delivery Details</h3>
                 <form id="order-form">
                     <div class="form-group">
                         <label for="cust-name">Full Name</label>
@@ -58,10 +66,9 @@
                         <label for="payment-proof">Payment Screenshot (optional)</label>
                         <input type="file" id="payment-proof" accept="image/*">
                     </div>
-                    <button type="submit" class="btn btn-dark checkout-btn">Complete Checkout</button>
+                    <button type="submit" class="btn checkout-btn">Complete Checkout</button>
                 </form>
             </div>
-
             <a href="index.html" class="back-link">← Continue Shopping</a>
         </div>
     </main>
@@ -70,9 +77,9 @@
     <script src="js/cart_store.js"></script>
     <script src="js/toast.js"></script>
     <script src="js/order_helpers.js"></script>
+    <script src="js/layout.js"></script>
     <script>
         let cart = load_cart();
-
         document.getElementById('payment-note').innerHTML =
             `Pay via MoMo to <strong>${MOMO_NUMBER}</strong> (${MOMO_ACCOUNT_NAME}), then enter your transaction ID and optionally upload a payment screenshot.`;
 
@@ -86,9 +93,7 @@
             if (cart.length === EMPTY_CART_LENGTH) {
                 container.innerHTML = `
                     <p class="empty-state">Your shopping cart is currently empty.</p>
-                    <div style="text-align:center;">
-                        <a class="btn btn-dark" href="index.html">Shop the Collection</a>
-                    </div>
+                    <div style="text-align:center;"><a class="btn" href="index.html">Shop the Collection</a></div>
                 `;
                 total_container.innerText = `Total: ${format_money(0)}`;
                 checkout_section.style.display = 'none';
@@ -96,7 +101,6 @@
             }
 
             checkout_section.style.display = 'block';
-
             cart.forEach((item, index) => {
                 const item_total = item.price * item.quantity;
                 const row = document.createElement('div');
@@ -115,14 +119,12 @@
                 `;
                 container.appendChild(row);
             });
-
             total_container.innerText = `Total: ${format_money(get_cart_total(cart))}`;
         }
 
         document.getElementById('cart-contents').addEventListener('click', (event) => {
             const button = event.target.closest('button');
             if (!button) return;
-
             const index = parseInt(button.dataset.index, 10);
             const action = button.dataset.action;
             const item = cart[index];
@@ -136,13 +138,11 @@
             } else if (action === 'dec') {
                 cart = update_item_quantity(cart, index, item.quantity - 1);
             }
-
             display_cart();
         });
 
         document.getElementById('order-form').addEventListener('submit', async (event) => {
             event.preventDefault();
-
             if (cart.length === EMPTY_CART_LENGTH) {
                 show_toast('Your cart is empty.', 'error');
                 return;
@@ -154,8 +154,6 @@
             const delivery_address = document.getElementById('cust-address').value.trim();
             const momo_transaction_id = document.getElementById('momo-id').value.trim();
             const total_price = get_cart_total(cart);
-            const proof_input = document.getElementById('payment-proof');
-
             const form_data = new FormData();
             form_data.append('customer_name', customer_name);
             form_data.append('customer_email', customer_email);
@@ -164,18 +162,12 @@
             form_data.append('momo_transaction_id', momo_transaction_id);
             form_data.append('total_price', String(total_price));
             form_data.append('items', JSON.stringify(cart));
-
-            if (proof_input.files && proof_input.files[0]) {
-                form_data.append('payment_proof', proof_input.files[0]);
-            }
+            const proof = document.getElementById('payment-proof').files[0];
+            if (proof) form_data.append('payment_proof', proof);
 
             try {
-                const response = await fetch('api/checkout.php', {
-                    method: 'POST',
-                    body: form_data,
-                });
+                const response = await fetch('api/checkout.php', { method: 'POST', body: form_data });
                 const result = await response.json();
-
                 if (result.success) {
                     save_last_order({
                         order_id: result.order_id,
@@ -186,11 +178,7 @@
                         delivery_address,
                         momo_transaction_id,
                         total_price,
-                        items: cart.map((item) => ({
-                            name: item.name,
-                            quantity: item.quantity,
-                            price: item.price,
-                        })),
+                        items: cart.map((item) => ({ name: item.name, quantity: item.quantity, price: item.price })),
                     });
                     clear_cart();
                     window.location.href = `order_success.html?order_id=${result.order_id}`;
@@ -198,7 +186,6 @@
                     show_toast(result.error || 'Checkout failed', 'error');
                 }
             } catch (error) {
-                console.error(error);
                 show_toast('Unexpected error during checkout.', 'error');
             }
         });
@@ -207,4 +194,6 @@
     </script>
 </body>
 </html>
+
+
 

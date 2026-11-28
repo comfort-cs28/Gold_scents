@@ -34,66 +34,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login | Gold Scents</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/store.css">
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .login-card {
-            width: min(420px, 92%);
-            background: var(--bg-panel);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 36px;
-        }
-        .login-card h2 {
-            text-align: center;
-            margin: 0 0 8px;
-            color: var(--gold);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-        .login-sub {
-            text-align: center;
-            color: var(--muted);
-            margin: 0 0 28px;
-        }
-        .error-message {
-            color: var(--danger);
-            text-align: center;
-            font-weight: 700;
-            margin-bottom: 14px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.85rem;
-        }
-    </style>
+    <link rel="stylesheet" href="css/store-pages.css">
+    <link rel="stylesheet" href="css/login.css">
 </head>
-<body>
-    <div class="login-card">
-        <h2>Gold Scents</h2>
-        <p class="login-sub">Staff Portal Authentication</p>
+<body class="login-page">
+    <div class="login-shell">
+        <div class="login-brand">
+            <img class="logo-image" src="image/gold_scents_logo.png" alt="">
+            <h1 class="logo-text">gold<span>scents</span></h1>
+            <small>Fine Fragrances</small>
+        </div>
 
-        <?php if ($error_message !== ''): ?>
-            <div class="error-message"><?php echo htmlspecialchars($error_message); ?></div>
-        <?php endif; ?>
+        <div class="login-panel">
+            <p class="login-kicker">Staff Portal</p>
+            <h2 class="login-title">Sign in</h2>
+            <div class="login-rule" aria-hidden="true"></div>
 
-        <form method="POST" action="login.php">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required autocomplete="username">
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required autocomplete="current-password">
-            </div>
-            <button type="submit" class="btn checkout-btn">Log In</button>
-        </form>
+            <?php if ($error_message !== ''): ?>
+                <div class="login-error"><?php echo htmlspecialchars($error_message); ?></div>
+            <?php endif; ?>
 
-        <a href="index.html" class="back-link">← Return to Storefront</a>
+            <form method="POST" action="login.php">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn checkout-btn login-submit">Log In</button>
+            </form>
+
+            <a href="index.html" class="login-back">← Return to storefront</a>
+        </div>
     </div>
 </body>
 </html>

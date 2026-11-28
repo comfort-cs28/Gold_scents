@@ -4,19 +4,10 @@ ini_set('display_errors', 0);
 
 header('Content-Type: application/json');
 require_once __DIR__ . '/auth_guard.php';
+require_once __DIR__ . '/../config/db.php';
 require_admin_session(true);
 
-$host = '127.0.0.1';
-$username = 'root';
-$password = '';
-$dbname = 'gold_scents_db';
-
-$conn = new mysqli($host, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    echo json_encode(['success' => false, 'error' => 'Database connection failed.']);
-    exit;
-}
+$conn = create_mysqli_connection();
 
 $data = json_decode(file_get_contents('php://input'), true);
 $order_id = isset($data['id']) ? intval($data['id']) : 0;

@@ -5,64 +5,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gold Scents | Luxury Fragrance Shop</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/store.css">
     <link rel="stylesheet" href="css/store-pages.css">
 </head>
 <body>
-    <div class="announcement-bar">Free consultation with every fragrance order</div>
+    <div class="announcement-bar">
+        <button type="button" data-announcement-prev aria-label="Previous">‹</button>
+        <span data-announcement-text>Free consultation with every fragrance order</span>
+        <button type="button" data-announcement-next aria-label="Next">›</button>
+    </div>
 
-    <header class="site-header">
-        <div class="logo-mark">
-            <h1 class="logo-text">goldscents</h1>
-            <small>Luxury fragrance vault</small>
-        </div>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="#collection">Collection</a>
-            <a href="track.html">Track Order</a>
-            <a href="cart.html">Cart <span class="cart-icon" id="cart-count">0</span></a>
-        </nav>
-    </header>
+    <div class="hero-wrap">
+        <header class="site-header" data-overlay-header>
+            <a class="logo" href="index.html" aria-label="Gold Scents home">
+                <img class="logo-image" src="image/gold_scents_logo.png" alt="">
+                <div class="logo-mark">
+                    <h1 class="logo-text">gold<span>scents</span></h1>
+                    <small>Fine Fragrances</small>
+                </div>
+            </a>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="#collection">Collection</a>
+                <a href="track.html">Track</a>
+                <a href="cart.html">Cart <span class="cart-icon" id="cart-count">0</span></a>
+                <a href="https://wa.me/233534048714" target="_blank" rel="noopener">WhatsApp</a>
+            </nav>
+        </header>
 
-    <section class="hero">
-        <div class="hero-media" aria-hidden="true"></div>
-        <div class="hero-content">
-            <p class="hero-brand">Gold Scents</p>
-            <h2>Fragrances for Distinction</h2>
-            <p>Discover our curated collection of scents designed for presence, memory, and signature style.</p>
-            <div class="hero-actions">
-                <a class="btn" href="#collection">Shop Now</a>
-                <a class="btn btn-ghost" href="https://wa.me/233534048714" target="_blank" rel="noopener">WhatsApp</a>
+        <section class="hero">
+            <div class="hero-media" aria-hidden="true"></div>
+            <div class="hero-content">
+                <p class="hero-kicker">Gold Scents Collection</p>
+                <h2>Fragrances for Distinction</h2>
+                <p>
+                    Discover our curated collection of scents designed to complement your style and spirit.
+                    Shop now for a signature scent or add to your collection.
+                </p>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
 
-    <main class="container" id="collection">
-        <div class="collection-toolbar">
-            <p class="product-count" id="product-count">0 products</p>
-            <div class="search-box">
-                <input type="text" id="search-input" placeholder="Search fragrance or notes..." />
-            </div>
-        </div>
+    <main class="catalog" id="collection">
+        <p class="product-count" id="product-count">0 products</p>
 
         <div class="shop-layout">
             <aside class="filter-panel">
-                <div class="filter-group">
-                    <h4>Collection</h4>
-                    <p>All fragrances</p>
+                <div class="filter-group is-open">
+                    <button class="filter-toggle" type="button">
+                        <span>Collection</span><span class="chevron">▾</span>
+                    </button>
+                    <div class="filter-body">
+                        <label><input type="radio" name="collection_filter" value="all" checked> All fragrances</label>
+                    </div>
                 </div>
                 <div class="filter-group">
-                    <h4>Payment</h4>
-                    <p>MoMo · 0598488853</p>
+                    <button class="filter-toggle" type="button">
+                        <span>Notes</span><span class="chevron">▾</span>
+                    </button>
+                    <div class="filter-body" id="notes-filters"></div>
                 </div>
                 <div class="filter-group">
-                    <h4>Support</h4>
-                    <p>WhatsApp ordering available on every product.</p>
+                    <button class="filter-toggle" type="button">
+                        <span>Availability</span><span class="chevron">▾</span>
+                    </button>
+                    <div class="filter-body">
+                        <label><input type="checkbox" id="in-stock-only"> In stock only</label>
+                    </div>
+                </div>
+                <div class="filter-group is-open">
+                    <button class="filter-toggle" type="button">
+                        <span>Payment</span><span class="chevron">▾</span>
+                    </button>
+                    <div class="filter-body">
+                        <p style="margin:0;color:var(--muted);font-size:0.85rem;">MoMo 0598488853 · Yikpa Comfort Akorfa</p>
+                    </div>
                 </div>
             </aside>
 
-            <div class="product-grid" id="product-grid"></div>
+            <section>
+                <div class="search-row">
+                    <input type="text" id="search-input" placeholder="Search fragrance or notes..." />
+                </div>
+                <div class="product-grid" id="product-grid"></div>
+            </section>
         </div>
     </main>
 
@@ -75,7 +102,7 @@
             <div class="footer-col">
                 <h4>Mobile Money</h4>
                 <p style="margin-bottom:8px;"><strong>MoMo:</strong> 0598488853</p>
-                <p><strong>Name:</strong> Gold Scents</p>
+                <p><strong>Name:</strong> Yikpa Comfort Akorfa</p>
             </div>
             <div class="footer-col">
                 <h4>Connect</h4>
@@ -94,23 +121,35 @@
     <script src="js/constants.js"></script>
     <script src="js/cart_store.js"></script>
     <script src="js/toast.js"></script>
+    <script src="js/layout.js"></script>
     <script>
         let cart = load_cart();
         let global_products = [];
+        const wishlist_key = 'goldScentsWishlist';
+
+        function load_wishlist() {
+            try {
+                return JSON.parse(localStorage.getItem(wishlist_key) || '[]');
+            } catch (error) {
+                return [];
+            }
+        }
+
+        let wishlist = load_wishlist();
 
         document.addEventListener('DOMContentLoaded', () => {
             load_products();
             update_cart_count();
             document.getElementById('search-input').addEventListener('input', apply_filtering);
+            document.getElementById('in-stock-only').addEventListener('change', apply_filtering);
         });
 
         async function load_products() {
             try {
                 const response = await fetch('api/products.php');
                 global_products = await response.json();
-                if (!Array.isArray(global_products)) {
-                    global_products = [];
-                }
+                if (!Array.isArray(global_products)) global_products = [];
+                build_notes_filters(global_products);
                 render_product_grid(global_products);
             } catch (error) {
                 console.error(error);
@@ -118,22 +157,37 @@
             }
         }
 
-        function stock_badge(stock_quantity) {
+        function build_notes_filters(products) {
+            const host = document.getElementById('notes-filters');
+            const notes = [...new Set(products.map((p) => (p.notes || '').trim()).filter(Boolean))];
+            host.innerHTML = notes.map((note) => `
+                <label>
+                    <input type="checkbox" class="note-filter" value="${escape_html(note)}">
+                    ${escape_html(note)}
+                </label>
+            `).join('') || '<p style="margin:0;color:var(--muted);">No notes yet</p>';
+
+            host.querySelectorAll('.note-filter').forEach((input) => {
+                input.addEventListener('change', apply_filtering);
+            });
+        }
+
+        function stock_badges(stock_quantity) {
             const stock = parseInt(stock_quantity, 10) || 0;
             if (stock < MIN_STOCK_AVAILABLE) {
-                return '<span class="badge out">Sold Out</span>';
+                return '<span class="badge badge--sold">Sold out</span>';
             }
             if (stock <= LOW_STOCK_THRESHOLD) {
-                return `<span class="badge low">Only ${stock} left</span>`;
+                return `<span class="badge badge--gold">Only ${stock} left</span>`;
             }
-            return '<span class="badge">In Stock</span>';
+            return '<span class="badge">In stock</span>';
         }
 
         function render_product_grid(products_to_display) {
             const grid = document.getElementById('product-grid');
-            const count_label = document.getElementById('product-count');
+            document.getElementById('product-count').textContent =
+                `${products_to_display.length} products`;
             grid.innerHTML = '';
-            count_label.textContent = `${products_to_display.length} products`;
 
             if (products_to_display.length === EMPTY_CART_LENGTH) {
                 grid.innerHTML = '<p class="empty-state">No fragrances match your search.</p>';
@@ -143,45 +197,54 @@
             products_to_display.forEach((product, index) => {
                 const stock = parseInt(product.stock_quantity, 10) || 0;
                 const out_of_stock = stock < MIN_STOCK_AVAILABLE;
+                const wished = wishlist.includes(String(product.id));
                 const card = document.createElement('article');
                 card.className = 'product-card';
-                card.style.animationDelay = `${index * 0.06}s`;
-
-                const notes_badge = product.notes
-                    ? `<span class="badge notes">${escape_html(product.notes)}</span>`
-                    : '';
+                card.style.animationDelay = `${index * 0.05}s`;
 
                 card.innerHTML = `
-                    <a class="card-media" href="product.html?id=${product.id}">
-                        <div class="card-badges">
-                            ${stock_badge(stock)}
-                            ${notes_badge}
-                        </div>
-                        <img src="${escape_html(product.image_url)}" alt="${escape_html(product.products_name)}" />
-                    </a>
-                    <div class="product-info">
-                        <h3 class="product-title">
-                            <a href="product.html?id=${product.id}">${escape_html(product.products_name)}</a>
-                        </h3>
-                        <p class="product-notes">${escape_html(product.notes || '')}</p>
-                        <p class="product-price">${format_money(product.price)}</p>
-                        <div class="card-actions">
-                            <button class="add-btn" ${out_of_stock ? 'disabled' : ''} type="button">
-                                ${out_of_stock ? 'Sold Out' : 'Add To Cart'}
-                            </button>
-                            <a class="wa-btn" href="${build_whatsapp_product_link(product.products_name)}" target="_blank" rel="noopener">
-                                Order on WhatsApp
-                            </a>
-                        </div>
+                    <div class="product-card__figure">
+                        <div class="badge-list">${stock_badges(stock)}</div>
+                        <button class="wish-btn ${wished ? 'is-active' : ''}" type="button" data-wish="${product.id}" aria-label="Wishlist">
+                            <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.5-9A5.4 5.4 0 0 1 12 5.2 5.4 5.4 0 0 1 21.5 12C19 16.4 12 21 12 21z"/></svg>
+                        </button>
+                        <a href="product.html?id=${product.id}">
+                            <img src="${escape_html(product.image_url)}" alt="${escape_html(product.products_name)}" />
+                        </a>
+                    </div>
+                    <h3 class="product-card__title">
+                        <a href="product.html?id=${product.id}">${escape_html(product.products_name)}</a>
+                    </h3>
+                    <p class="product-card__price">${format_money(product.price)}</p>
+                    <p class="product-card__notes">${escape_html(product.notes || '')}</p>
+                    <div class="product-card__actions">
+                        <button class="add-btn" type="button" ${out_of_stock ? 'disabled' : ''}>
+                            ${out_of_stock ? 'Sold Out' : 'Add To Cart'}
+                        </button>
+                        <a class="wa-btn" href="${build_whatsapp_product_link(product.products_name)}" target="_blank" rel="noopener">
+                            Order on WhatsApp
+                        </a>
                     </div>
                 `;
 
-                card.querySelector('.add-btn').addEventListener('click', () => {
-                    handle_add_to_cart(product);
+                card.querySelector('.add-btn').addEventListener('click', () => handle_add_to_cart(product));
+                card.querySelector('.wish-btn').addEventListener('click', (event) => {
+                    toggle_wishlist(String(product.id), event.currentTarget);
                 });
 
                 grid.appendChild(card);
             });
+        }
+
+        function toggle_wishlist(product_id, button) {
+            if (wishlist.includes(product_id)) {
+                wishlist = wishlist.filter((id) => id !== product_id);
+                button.classList.remove('is-active');
+            } else {
+                wishlist.push(product_id);
+                button.classList.add('is-active');
+            }
+            localStorage.setItem(wishlist_key, JSON.stringify(wishlist));
         }
 
         function handle_add_to_cart(product) {
@@ -193,28 +256,35 @@
             }, stock);
 
             cart = result.cart;
-
-            if (!result.added && result.reason === 'out_of_stock') {
-                show_toast('This fragrance is out of stock.', 'error');
+            if (!result.added) {
+                show_toast(
+                    result.reason === 'out_of_stock'
+                        ? 'This fragrance is out of stock.'
+                        : 'No more stock available for this item.',
+                    'error'
+                );
                 return;
             }
-
-            if (!result.added && result.reason === 'stock_limit') {
-                show_toast('No more stock available for this item.', 'error');
-                return;
-            }
-
             update_cart_count();
             show_toast(`Added ${product.products_name} to cart`);
         }
 
         function apply_filtering() {
             const text_query = document.getElementById('search-input').value.toLowerCase().trim();
+            const in_stock_only = document.getElementById('in-stock-only').checked;
+            const selected_notes = [...document.querySelectorAll('.note-filter:checked')].map((el) => el.value);
+
             const filtered = global_products.filter((product) => {
+                const stock = parseInt(product.stock_quantity, 10) || 0;
                 const name_match = product.products_name.toLowerCase().includes(text_query);
                 const notes_match = (product.notes || '').toLowerCase().includes(text_query);
-                return name_match || notes_match;
+                const text_ok = name_match || notes_match;
+                const stock_ok = !in_stock_only || stock >= MIN_STOCK_AVAILABLE;
+                const notes_ok = selected_notes.length === EMPTY_CART_LENGTH
+                    || selected_notes.includes((product.notes || '').trim());
+                return text_ok && stock_ok && notes_ok;
             });
+
             render_product_grid(filtered);
         }
 
@@ -224,4 +294,6 @@
     </script>
 </body>
 </html>
+
+
 

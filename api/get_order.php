@@ -2,19 +2,9 @@
 header('Content-Type: application/json');
 
 require_once __DIR__ . '/../config/constants.php';
+require_once __DIR__ . '/../config/db.php';
 
-$host = '127.0.0.1';
-$username = 'root';
-$password = '';
-$dbname = 'gold_scents_db';
-
-$conn = new mysqli($host, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'error' => 'Database connection failed.']);
-    exit;
-}
+$conn = create_mysqli_connection();
 
 $order_id = intval($_GET['order_id'] ?? 0);
 $lookup_value = trim($_GET['lookup'] ?? '');
